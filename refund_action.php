@@ -390,27 +390,10 @@ try {
 
         $normalized = strtolower(trim((string) ($stripeResult['transaction_status'] ?? 'pending')));
 
-        if ($normalized === 'succeeded') {
-            bv_order_refund_mark_refunded(
-                $refundId,
-                $amount,
-                [],
-                $actorUserId,
-                'Stripe refund succeeded',
-                $actorRole
-            );
-            bv_admin_refund_action_set_flash('success', 'Stripe refund succeeded.');
-        } elseif ($normalized === 'failed' || $normalized === 'cancelled') {
-            bv_order_refund_mark_failed(
-                $refundId,
-                (string) ($stripeResult['failure_message'] ?? 'Stripe refund failed'),
-                [],
-                $actorUserId,
-                $actorRole
-            );
-            bv_admin_refund_action_set_flash('error', 'Stripe refund failed.');
+       if ($normalized === 'failed' || $normalized === 'cancelled') {
+            bv_admin_refund_action_set_flash('warning', 'Stripe refund submitted and awaiting webhook confirmation.'); 
         } else {
-            bv_admin_refund_action_set_flash('success', 'Stripe refund pending.');
+           bv_admin_refund_action_set_flash('success', 'Stripe refund submitted to Stripe and awaiting webhook confirmation.'); 
         }
     } else {
         throw new RuntimeException('Unsupported action: ' . $action);
